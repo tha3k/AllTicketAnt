@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="run" name="Test Build Ant">		
+
+	<!-- Create Ref File ID Extend  -->
+	<path id="compile.classpath">
+		<fileset dir="WebContent/WEB-INF/lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Task Create directory path   -->
+	<target name="init">
+		<mkdir dir="build/classes"/>
+		<mkdir dir="complie/war" />
+	</target>
+	
+	<!-- Task Compile  -->
+	<target name="compile" depends="init" >
+	
+		<!-- Compile java to class at src directory   -->
+		<javac includeantruntime="false" destdir="build/classes" debug="true" srcdir="src">
+			
+			<!-- ref file ID extend  -->
+			<classpath refid="compile.classpath"/>
+			
+		</javac>
+		
+	</target>			
+	
+	<!-- Task Create WAR file  -->
+	<target name="run" depends="compile">
+	
+		<!-- define dir path for war file  -->
+		<war destfile="complie/war/HelloAntBuild.war" webxml="WebContent/WEB-INF/web.xml">
+		
+			<!-- define another file that war file need -->
+			<fileset dir="WebContent"/> <!-- the web directory -->
+			<lib dir="WebContent/WEB-INF/lib"/> <!-- lib directory -->
+			<classes dir="build/classes"/> <!-- the classes directory -->
+			
+		</war>
+		
+	</target>					
+	
+	<!-- Task Clean  -->
+	<target name="clean">
+		<delete dir="complie/war" />
+		<delete dir="build" />
+	</target>
+	
+</project>
