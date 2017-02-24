@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="run" name="Test Build Ant">
 	
-	<property name="dir.lib" value="/usr/java/test" />
+	<property name="dir.lib" value="/var/lib/jenkins/workspace/Lib" />
 	
 	<path id="compile.classpath">
 		<fileset dir="lib">
