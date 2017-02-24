@@ -34,21 +34,7 @@ public class Const {
 	
 	public static final String ENCODE_GETBYTE = "ISO8859-1";
 	public static final String ENCODE = "TIS-620";
-	public static final String ENCODE_UTF_8 = "UTF-8";
-	
-	/*thai month*/
-	public static final String JAN_TH = "à¸¡.à¸?.";
-	public static final String FEB_TH = "à¸?.à¸?.";
-	public static final String MAR_TH = "à¸¡à¸µ.à¸?.";
-	public static final String APL_TH = "à¹€à¸¡.à¸¢.";
-	public static final String MAY_TH = "à¸?.à¸?.";
-	public static final String JUN_TH = "à¸¡à¸´.à¸¢.";
-	public static final String JUL_TH = "à¸?.à¸?.";
-	public static final String AUG_TH = "à¸ª.à¸?.";
-	public static final String SEP_TH = "à¸?.à¸¢.";
-	public static final String OCT_TH = "à¸•.à¸?.";
-	public static final String NOV_TH = "à¸?.à¸¢.";
-	public static final String DEC_TH = "à¸?.à¸?";
+	public static final String ENCODE_UTF_8 = "UTF-8";	
 	
 	//Autofix Connect  POS
 	public static final String POS_PREFIX = "117.1";

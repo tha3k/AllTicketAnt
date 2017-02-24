@@ -242,66 +242,7 @@ public class StringUtil {
 		return ipServer;
 	}
 	
-	public static String convertThaiMonth(String rcvDate) throws Exception {
-		String rtnDate = "";
-				
-		try {
-			String day = rcvDate.substring(0,2);
-			String month = rcvDate.substring(3,5);
-//			String year = rcvDate.substring(6,10);
-			
-			int iMonth = Integer.parseInt(month);
-//			int iYear = Integer.parseInt(year)+543;
-//			year = String.valueOf(iYear).substring(2,4);
-			
-			switch (iMonth){  
-			  case 1:
-				  rtnDate = day+Const.JAN_TH;
-				  break;
-			  case 2:
-				  rtnDate = day+Const.FEB_TH;
-				  break;
-			  case 3:
-				  rtnDate = day+Const.MAR_TH;
-				  break;
-			  case 4:
-				  rtnDate = day+Const.APL_TH;
-				  break;
-			  case 5:
-				  rtnDate = day+Const.MAY_TH;
-				  break;
-			  case 6:
-				  rtnDate = day+Const.JUN_TH;
-				  break;
-			  case 7:
-				  rtnDate = day+Const.JUL_TH;
-				  break;
-			  case 8:
-				  rtnDate = day+Const.AUG_TH;
-				  break;
-			  case 9:
-				  rtnDate = day+Const.SEP_TH;
-				  break;
-			  case 10:
-				  rtnDate = day+Const.OCT_TH;
-				  break;
-			  case 11:
-				  rtnDate = day+Const.NOV_TH;
-				  break;
-			  case 12:
-				  rtnDate = day+Const.DEC_TH;
-				  break;
-			  }
-			
-		} catch (Exception e) {
-			throw e;
-		}
-		
-		return rtnDate;
-	}	
-	
-	
-	
+
 	public static String ifNull(String rcvText, String replaceNull){
 		String rtnText = "";
 		
