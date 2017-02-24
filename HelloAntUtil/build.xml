@@ -28,7 +28,7 @@
 	
 	<target name="zipJar">
 		
-			<copy todir="build/classes/lib" >
+			<copy todir="${dir.lib}" >
 				<fileset dir="lib" /> <!-- packing lib file internal-->	
 			</copy>
 		
