@@ -7,6 +7,7 @@ import cs.util.LogUtil;
 
 public class Demo {	
 	
+	
 	public static void main(String[] args) {
 		
 		Logger logger = null;
@@ -31,7 +32,6 @@ public class Demo {
 			logger.info("Error : "+e.toString(), e);
 			
 		}
-			
 	}
 	
 }
