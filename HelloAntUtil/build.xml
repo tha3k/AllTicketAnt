@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="run" name="Test Build Ant">
+	
+	<property name="dir.lib" value="/usr/java/test" />
+	
+	<path id="compile.classpath">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Task Create directory path   -->
+	<target name="init">
+		<mkdir dir="build/classes/lib"/>
+		<!-- <mkdir dir="${dir.lib}" /> -->
+	</target>		
+	
+	<!-- Task Compile  -->
+	<target name="compile" depends="init" >
+	
+		<!-- Compile java to class at src directory   -->
+		<javac includeantruntime="false" destdir="build/classes" debug="true" srcdir="src">														
+				<!-- ref file ID extend  -->
+				<classpath refid="compile.classpath"/>
+		</javac>				
+		
+	</target>		
+	
+	<target name="zipJar">
+		
+			<copy todir="build/classes/lib" >
+				<fileset dir="lib" /> <!-- packing lib file internal-->	
+			</copy>
+		
+	</target>
+	
+	<!-- Task Create WAR file  -->
+	<target name="run" depends="compile, zipJar">
+					
+		<!-- define dir path for war file  -->	      
+	        <jar destfile="${dir.lib}\HelloAntUtil.jar" basedir="build/classes">
+	        			
+	        </jar>						
+		
+	</target>					
+	
+	<!-- Task Clean  -->
+	<target name="clean">
+		<delete dir="complie/war" />
+		<delete dir="build" />
+	</target>
+	
+</project>
