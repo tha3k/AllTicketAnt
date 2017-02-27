@@ -30,8 +30,8 @@ public class LogUtil {
 	
 	public LogUtil(String subFolder, String prefix, String logName){
 		setLogLevel(subFolder, logName);
-		this.FILE_SIZE = PropConfig.getProperty("LOGAPP.FILESIZE");
-		String logPath = PropConfig.getProperty("LOGAPP.PATH");
+		this.FILE_SIZE = "9MB"; //PropConfig.getProperty("LOGAPP.FILESIZE");
+		String logPath = "/usr/share/logs-app/"; ///PropConfig.getProperty("LOGAPP.PATH");
 		if(logName!=null && logName.lastIndexOf(".")>=0){
 			logName = logName.substring(logName.lastIndexOf(".")+1);
 		}		
@@ -119,13 +119,13 @@ public class LogUtil {
 	private void setLogLevel(String subFolder, String logName){
 			
 		if(logName!=null && !logName.equals("")){
-			lvl = PropConfig.getProperty("LOG_"+logName.toUpperCase()+".LEVEL");
+			lvl = "INFO";//PropConfig.getProperty("LOG_"+logName.toUpperCase()+".LEVEL");
 		} else {
-			lvl = PropConfig.getProperty("LOGAPP.LEVEL");
+			lvl = "INFO";//PropConfig.getProperty("LOGAPP.LEVEL");
 		}
 		
 		if(subFolder==null || subFolder.equals("")) {
-			lvl = PropConfig.getProperty("LOGAPP.LEVEL");	
+			lvl = "INFO";//PropConfig.getProperty("LOGAPP.LEVEL");	
 		}
 		
 		if(lvl==null){
