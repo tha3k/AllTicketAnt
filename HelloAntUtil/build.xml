@@ -1,53 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="run" name="Test Build Ant">
+<project default="run" name="HelloAntUtil">
 	
-	<property name="dir.lib" value="/var/lib/jenkins/workspace/Lib" />
+	<!-- Creat Session Value -->
+	<basename property="my.project.name" file="${basedir}"/>
+	<property name="dir.lib" value="var/lib/jenkins/workspace/Lib/${my.project.name}" />
 	
+	<!-- Creat Class Path -->
 	<path id="compile.classpath">
 		<fileset dir="lib">
 			<include name="*.jar"/>
 		</fileset>
 	</path>
 	
-	<!-- Task Create directory path   -->
+	<!-- Task Create directory path  -->
 	<target name="init">
-		<mkdir dir="build/classes/lib"/>
-		<!-- <mkdir dir="${dir.lib}" /> -->
+		<mkdir dir="build/classes"/>
+		<mkdir dir="${dir.lib}"/>		
 	</target>		
 	
 	<!-- Task Compile  -->
 	<target name="compile" depends="init" >
-	
+
 		<!-- Compile java to class at src directory   -->
-		<javac includeantruntime="false" destdir="build/classes" debug="true" srcdir="src">														
+		<javac includeantruntime="false" destdir="build/classes" srcdir="src">														
 				<!-- ref file ID extend  -->
 				<classpath refid="compile.classpath"/>
-		</javac>				
+		</javac>																						
 		
 	</target>		
 	
-	<target name="zipJar">
-		
+	<!-- Task Copy Lib File -->
+	<target name="copyLibFile">
+	
+			<!-- Copy Lib File in project to main lib folder -->	
 			<copy todir="${dir.lib}" >
-				<fileset dir="lib" /> <!-- packing lib file internal-->	
+				<fileset dir="lib" />	
 			</copy>
 		
 	</target>
 	
 	<!-- Task Create WAR file  -->
-	<target name="run" depends="compile, zipJar">
+	<target name="run" depends="compile, copyLibFile">
 					
-		<!-- define dir path for war file  -->	      
-	        <jar destfile="${dir.lib}\HelloAntUtil.jar" basedir="build/classes">
-	        			
-	        </jar>						
+			<!-- define dir path for war file  -->	      
+	        <jar destfile="${dir.lib}\HelloAntUtil.jar" basedir="build/classes" />
+		
+			<!-- delete dir and classs file before create jar  -->
+			<delete dir="build" />			
 		
 	</target>					
-	
-	<!-- Task Clean  -->
-	<target name="clean">
-		<delete dir="complie/war" />
-		<delete dir="build" />
-	</target>
+						
 	
 </project>
