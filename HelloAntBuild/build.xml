@@ -1,51 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="run" name="Test Build Ant">		
-
-	<!-- Create Ref File ID Extend  -->
-	<path id="compile.classpath">
-		<fileset dir="WebContent/WEB-INF/lib">
-			<include name="*.jar"/>
-		</fileset>
-	</path>
+<project default="run" name="HelloAntBuild">				
 	
-	<!-- Task Create directory path   -->
-	<target name="init">
-		<mkdir dir="build/classes"/>
-		<mkdir dir="complie/war" />
-	</target>
-	
-	<!-- Task Compile  -->
-	<target name="compile" depends="init" >
-	
-		<!-- Compile java to class at src directory   -->
-		<javac includeantruntime="false" destdir="build/classes" debug="true" srcdir="src">
+	<!-- Creat Session Value -->
+	<property name="path.lib.HelloAntUtil" value="var/lib/jenkins/workspace/HelloAntUtil"/>
+	<property name="path.lib.WebContent" value="WebContent/WEB-INF/lib"/>
 			
-			<!-- ref file ID extend  -->
+	<!-- create type of path variable, variable name is compile.classpath -->
+	<path id="compile.classpath"> 
+		
+		<!-- import all file in "WebContent/WEB-INF/lib" directory -->
+		<fileset dir="${path.lib.WebContent}">
+			
+			<!-- for jar file only -->
+			<include name="*.jar"/>
+			
+		</fileset>		
+		
+	</path>			
+	
+	<!-- Task Create directory path  -->
+	<target name="init">
+		<mkdir dir="build/classes"/>		
+	</target>		
+	
+	<!-- Task Copy Lib File -->
+	<target name="copyLibFile" depends="init">
+	
+			<!-- Copy Lib File in project to main lib folder -->	
+			<copy todir="${path.lib.WebContent}" >
+
+				<fileset dir="${path.lib.HelloAntUtil}">
+								
+					<!-- for jar file only -->
+					<include name="*.jar"/>
+								
+				</fileset>
+				
+			</copy>
+		
+	</target>
+		
+	<!-- ## Task Compile  -->
+	<target name="compile" depends="copyLibFile" >
+		
+		<!-- compile source from src path (java to class)   -->
+		<javac srcdir="src" destdir="build/classes" includeantruntime="false" debug="true" >
+			
+			<!-- extend libraries import reference path -->
 			<classpath refid="compile.classpath"/>
 			
 		</javac>
 		
 	</target>			
 	
-	<!-- Task Create WAR file  -->
+	<!-- ## Task Create WAR file  -->
 	<target name="run" depends="compile">
 	
 		<!-- define dir path for war file  -->
-		<war destfile="complie/war/HelloAntBuild.war" webxml="WebContent/WEB-INF/web.xml">
+		<war destfile="complie/war/HelloAntBuild.war" >
 		
 			<!-- define another file that war file need -->
-			<fileset dir="WebContent"/> <!-- the web directory -->
-			<lib dir="WebContent/WEB-INF/lib"/> <!-- lib directory -->
+			<fileset dir="WebContent"/> <!-- the web directory -->			
 			<classes dir="build/classes"/> <!-- the classes directory -->
 			
-		</war>
+		</war>		
 		
-	</target>					
-	
-	<!-- Task Clean  -->
-	<target name="clean">
-		<delete dir="complie/war" />
-		<delete dir="build" />
-	</target>
+		<!-- delete dir and classs file before create war  -->
+		<delete dir="build" />		
+		
+	</target>						
 	
 </project>
