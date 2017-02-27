@@ -59,6 +59,9 @@
 		<!-- delete dir and classs file before create war  -->
 		<delete dir="${path.build}" />		
 		
+		<!-- unwar  -->
+		<unwar dest="./" src="${path.complie}/${my.project.name}.war" />	
+		
 	</target>						
 	
 </project>
