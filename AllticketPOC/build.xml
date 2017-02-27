@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="run" name="HelloAntBuild">				
+	
+	<!-- Creat Session Value -->	
+	<basename property="my.project.name" file="${basedir}"/>	
+	<property name="path.lib.web.content" value="WebContent/WEB-INF/lib"/>
+	<property name="path.web.content" value="WebContent"/>				
+	<property name="path.complie" value="complie/war"/>
+	<property name="path.build" value="build/classes"/>	
+	
+	<!-- create type of path variable, variable name is compile.classpath -->
+	<path id="compile.classpath"> 
+		
+		<!-- import all file in "WebContent/WEB-INF/lib" directory -->
+		<fileset dir="${path.lib.web.content}">
+			
+			<!-- for jar file only -->
+			<include name="*.jar"/>
+			
+		</fileset>		
+		
+	</path>						
+	
+	<condition property="path.src.exists">
+    	  	<available file="src" type="dir"/>
+	</condition>
+	    
+	<!-- Task Create directory path  -->
+	<target name="init">	
+		<mkdir dir="${path.build}"/>
+		<mkdir dir="${path.complie}"/>		
+	</target>						
+		
+	<!-- ## Task Compile  -->
+	<target name="compile" depends="init" if="path.src.exists">		
+		
+		<!-- compile source from src path (java to class)   -->
+			<javac srcdir="src" destdir="${path.build}" includeantruntime="false" debug="true">
+							
+				<!-- extend libraries import reference path -->
+				<classpath refid="compile.classpath"/>
+				
+			</javac>
+			
+	</target>					
+  
+	<!-- ## Task Create WAR file  -->
+	<target name="run" depends="compile">
+	
+		<!-- define dir path for war file  -->
+		<war destfile="${path.complie}/${my.project.name}.war" >
+		
+			<!-- define another file that war file need -->
+			<fileset dir="${path.web.content}"/> <!-- the web directory -->			
+			<classes dir="${path.build}"/> <!-- the classes directory -->
+			
+		</war>		
+		
+		<!-- delete dir and classs file before create war  -->
+		<delete dir="${path.build}" />		
+		
+	</target>						
+	
+</project>
