@@ -2,7 +2,7 @@
 <project default="run" name="HelloAntBuild">				
 	
 	<!-- Creat Session Value -->
-	<property name="path.lib.HelloAntUtil" value="var/lib/jenkins/workspace/HelloAntUtil"/>
+	<property name="path.lib.HelloAntUtil" value="var/lib/jenkins/workspace/Lib/HelloAntUtil"/>
 	<property name="path.lib.WebContent" value="WebContent/WEB-INF/lib"/>
 			
 	<!-- create type of path variable, variable name is compile.classpath -->
