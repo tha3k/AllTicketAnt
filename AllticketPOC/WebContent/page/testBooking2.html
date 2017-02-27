@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insert title here</title>
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+<script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+<script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+<script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+<script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+<script type="text/javascript" src="lib/url-template/url-template.js"></script>
+<script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+<script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+<script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+<script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+<script type="text/javascript" src="apigClient.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#btn_book').click(function(){
+	 //var apigClient = apigClientFactory.newClient();
+	
+	config = {invokeUrl:'https://9jk78ses23.execute-api.us-west-2.amazonaws.com/postBooking/bookingFunction'}
+	
+	var apigClient = apigClientFactory.newClient(config);
+	var params = {
+  // This is where any modeled request parameters should be added.
+  // The key is the parameter name, as it is defined in the API in API Gateway.
+	  //Booking_Id: '1111'
+	  //Booking_Id: ''
+	  	performId:'17008',
+		roundId:'R1',
+		zoneId:'A1A',
+		seatId:'A1',
+		userLogin:'test@gmail.com',
+		Booking_Id:'test'
+	};
+	
+	apigClient.rootGet(params)
+	    .then(function(result){
+	      // Add success callback code here.
+	      console.log("Success : " + JSON.stringify(result));
+	      var data = JSON.stringify(result)
+	      console.log("data : " + result.data);
+	      console.log("Success : " + params);
+	    }).catch( function(result){
+	      console.log("Err : " + result);
+		});
+	});
+    
+  });
+</script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-default" role="navigation" style="height: 80px;">
+	<div class="container-fluid" >
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header" >
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse" style="margin-top: 15px;">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#"><img alt="" src="https://atkmedia.allticketthailand.com/images/logo.gif" style="height: 60px;"></a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse navbar-ex1-collapse" style="margin-top: 15px;">
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">User <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">Profile</a></li>
+						<li><a href="#">History</a></li>
+						<li><a href="#">Sign out</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</div>
+</nav>
+<div class="container">
+	<div style="text-align: center;">
+	<img alt="" src="https://atkmedia.allticketthailand.com/images/up/SMT17008/SMTEVENT1700816022017info2.jpg">
+	<table>
+	<tr>
+		<td>Booking</td>
+	</tr>
+	<tr>
+		<td>Event : XXXX</td>
+	</tr>
+	<tr>
+		<td>
+		<input type="hidden" id="performId" name="performId" value="17008"/>
+		<input type="hidden" id="roundId" name="roundId" value="R1"/>
+		<input type="hidden" id="zoneId" name="zoneId" value="A1"/>
+		<input type="hidden" id="seatId" name="seatId" value="1,2,3,4"/>
+		<input type="hidden" id="userLogin" name="userLogin" value="beartalo@gmail.com"/>
+		
+		<button type="button" class="btn" id="btn_book" >Booking</button>
+		</td>
+	</tr>
+</table>
+	</div>
+</div>
+
+
+
+<div id="result">
+</div>
+
+
+</body>
+</html>

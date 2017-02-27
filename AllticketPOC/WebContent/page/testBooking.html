@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insert title here</title>
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+<script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+<script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+<script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+<script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+<script type="text/javascript" src="lib/url-template/url-template.js"></script>
+<script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+<script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+<script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+<script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+<script type="text/javascript" src="apigClient.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#btn_book').click(function(){
+		//alert("Book > "+$('#performId').val()+"_"+$('#roundId').val()+"_"+$('#zoneId').val()+"_"+$('#seatId').val());
+		/*
+		$.ajax({
+			type: "POST",
+	       	dataType: "jsonp",
+	       	//dataType: "json",
+	       	crossDomain: true,
+	       	url: "http://o542xb1c7g.execute-api.us-west-2.amazonaws.com/GetBooking",
+	       	//url: "https://9jk78ses23.execute-api.us-west-2.amazonaws.com/postBooking/booking",
+	       	async: false,
+	       	//contentType: 'application/json',
+	       	//data : JSON.stringify({"Booking_Id":"aaa"}),
+	       	//processData: false,
+	       	data : {"Booking_Id":"aaa"},
+	       	//data: '{"Booking_Id": "aaa"}' ,
+	       	//data : {performId:$('#performId').val(),roundId:$('#roundId').val(),zoneId:$('#zoneId').val(),seatId:$('#seatId').val(),userLogin:$('#userLogin').val()},
+	       	success: function(data) { 	
+	       		alert("dsfdsdf");
+	       		//checkBKGStatus(data.booking)
+     		},
+      		error: function (x, t, m){
+      			alert("000>>>>   "+m);
+      			alert("sfd>>>>   "+t);
+      			$('#result').html("Booking fail!!!");
+   			}
+		});
+		*/
+		/*
+		$.post('https://9jk78ses23.execute-api.us-west-2.amazonaws.com/postBooking',
+				{performId:$('#performId').val(),roundId:$('#roundId').val(),zoneId:$('#zoneId').val(),seatId:$('#seatId').val(),userLogin:$('#userLogin').val()},
+				function(data){
+					alert(data.message);
+				}, "json"
+		);
+		*/
+		var apigClient = apigClientFactory.newClient();
+		
+		var params = {
+			    //This is where any header, path, or querystring request params go. The key is the parameter named as defined in the API
+			    Booking_Id: 'aaa'
+			};
+		
+			var body = {
+			    //This is where you define the body of the request
+			};
+			var additionalParams = {
+			    //If there are any unmodeled query parameters or headers that need to be sent with the request you can add them here
+			    headers: {
+			        param0: '',
+			        param1: ''
+			    },
+			    queryParams: {
+			        param0: '',
+			        param1: ''
+			    }
+			};
+			
+			
+			apigClient.rootGet(params, body, additionalParams)
+			    .then(function(result){
+			        //This is where you would put a success callback
+			        alert("444");
+			    }).catch( function(result){
+			        //This is where you would put an error callback
+			    	alert("555");
+			    });
+	});
+	
+	function checkBKGStatus (bkgID){
+		
+		var now = new Date();
+		
+		var timeEnd = now.setMilliseconds(60000);
+		
+		
+		var isEnd = false;
+		
+		while(new Date()>timeEnd&&!isEnd){
+			
+			$.ajax({
+		    	type: "POST",
+		       	dataType: "json",
+		       	url: "https://o542xb1c7g.execute-api.us-west-2.amazonaws.com/GetBooking",
+		       	async: false,
+		       	data : {Booking_Id:'aaa'},
+		       	success: function(data) { 	
+		       		if(data.result){
+		       			isEnd = true;
+		       			$('#result').html("Booking Success");
+		       		}
+	     		},
+	      		error: function (x, t, m){
+	      			isEnd = true;
+	      			$('#result').html("Reserve fail!!!");
+	   			}
+			});
+			
+			
+		}
+		
+	}
+});
+</script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-default" role="navigation" style="height: 80px;">
+	<div class="container-fluid" >
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header" >
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse" style="margin-top: 15px;">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#"><img alt="" src="https://atkmedia.allticketthailand.com/images/logo.gif" style="height: 60px;"></a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse navbar-ex1-collapse" style="margin-top: 15px;">
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">User <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">Profile</a></li>
+						<li><a href="#">History</a></li>
+						<li><a href="#">Sign out</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</div>
+</nav>
+<div class="container">
+	<div style="text-align: center;">
+	<div>
+	<img alt="" src="https://atkmedia.allticketthailand.com/images/up/SMT17008/SMTEVENT1700816022017info2.jpg">
+	</div>
+	<div>
+	<p>
+	<table align="center" border="0" cellpadding="10" cellspacing="20" height="188" style="width: 100%">
+		<tbody>
+			<tr>
+				<td colspan="2" style="width: 50%; vertical-align: top;">
+					<center>
+						<p>
+							<span style="color:#000080;"><span style="font-size:20px;"><strong><span style="font-family:tahoma,geneva,sans-serif;">KYUHYUN SOLO CONCERT -Reminiscence of a novelist- in BANGKOK</span></strong></span></span></p>
+						<p>
+							<span style="color:#0000cd;"><span style="font-size:18px;"><strong><span style="font-family:tahoma,geneva,sans-serif;">(คยูฮยอน โซโล่ คอนเสิร์ต -เรเมนิเซนซ์ ออฟ อะ โนเวลิสท์- อิน แบงค็อก)</span></strong></span></span></p>
+						<p align="center">
+							<strong><span style="font-size:14px;"><span style="font-family:tahoma,geneva,sans-serif;">SM True ขอต้อนรับปี 2560 !! ด้วยสุดยอดคอนเสิร์ตแห่งความประทับใจ</span></span></strong><br />
+							<strong><span style="font-size:12px;"><span style="font-family:tahoma,geneva,sans-serif;">&quot;KYUHYUN SOLO CONCERT -Reminiscence of a novelist- in BANGKOK&quot;</span></span></strong><br />
+							<span style="font-size:12px;"><span style="font-family:tahoma,geneva,sans-serif;">คอนเสิร์ตเดี่ยวครั้งแรกของนักร้องสุดหล่อเสียงละมุน <strong>&#39;KYUHYUN&#39; แห่งวง &#39;SUPER JUNIOR&#39;</strong> บอยแบนด์ขวัญใจชาวไทย </span></span><br />
+							<strong><span style="font-size:12px;"><span style="font-family:tahoma,geneva,sans-serif;">ในวันอาทิตย์ที่ 19 มีนาคม 2560 ณ ธันเดอร์โดม เมืองทองธานี</span></span></strong></p>
+						<p align="center">
+							<span style="font-size:12px;"><span style="font-family:tahoma,geneva,sans-serif;">----------------------------------------------------------------------------</span></span></p>
+						<p align="center">
+							<strong><span style="font-size:14px;"><span style="font-family:tahoma,geneva,sans-serif;">SM True welcomes 2017 !! with the most impressive concert</span></span></strong><br />
+							<strong><span style="font-size:12px;"><span style="font-family:tahoma,geneva,sans-serif;">&quot;KYUHYUN SOLO CONCERT -Reminiscence of a novelist- in BANGKOK&quot;</span></span></strong><br />
+							<span style="font-size:12px;"><span style="font-family:tahoma,geneva,sans-serif;">The 1st solo concert of <strong>SUPER JUNIOR Main Vocalist &quot;KYUHYUN&quot;</strong><br />
+							<strong>on Sunday 19th March 2017 at Thunder Dome Muang Thong Thani</strong>. ^^</span></span></p>
+						<p align="center">
+							<img alt="Facebook free icon" src="http://image.flaticon.com/icons/svg/185/185981.svg" style="height: 20px; width: 20px;" /><span style="font-size:12px;"><strong><span style="font-family: tahoma, geneva, sans-serif;">&nbsp;</span></strong><strong><span style="font-family:tahoma,geneva,sans-serif;"><a href="https://www.facebook.com/hashtag/kyuhyunsoloconcertinbkk?source=feed_text&amp;story_id=1263771523670793" target="_blank">#KYUHYUNSOLOCONCERTinBKK</a>&nbsp;</span></strong></span><img alt="Twitter free icon" src="http://image.flaticon.com/icons/svg/185/185961.svg" style="height: 20px; width: 20px;" /></p>
+					</center>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	<table>
+	<tr>
+		<td>Booking</td>
+	</tr>
+	<tr>
+		<td>Event : XXXX</td>
+	</tr>
+	<tr>
+		<td>
+		<input type="hidden" id="performId" name="performId" value="17008"/>
+		<input type="hidden" id="roundId" name="roundId" value="R1"/>
+		<input type="hidden" id="zoneId" name="zoneId" value="A1"/>
+		<input type="hidden" id="seatId" name="seatId" value="1,2,3,4"/>
+		<input type="hidden" id="userLogin" name="userLogin" value="beartalo@gmail.com"/>
+		
+		<button type="button" class="btn" id="btn_book" >Booking</button>
+		</td>
+	</tr>
+</table>
+	</div>
+</div>
+
+
+
+<div id="result">
+</div>
+
+
+</body>
+</html>
