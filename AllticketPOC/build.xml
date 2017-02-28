@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="run" name="AntBuild">				
 	
-	<!-- Creat Session Value -->	
+	<!-- public session -->	
 	<basename property="my.project.name" file="${basedir}"/>		
 	<property name="path.web.content" value="WebContent"/>				
 	<property name="path.complie" value="complie"/>
 	<property name="path.build" value="build"/>
 	<property name="path.source" value="source"/>
 	
-	<!-- Internal Libs Reference -->
+	<!-- internal libraries reference -->
 	<property name="path.lib.web.content" value="WebContent/WEB-INF/lib"/>
 	
-	<!-- Create classpath session -->
+	<!-- classpath session -->
 	<path id="compile.classpath"> 
 		
 		<!-- import all file in "WebContent/WEB-INF/lib" directory -->
@@ -24,7 +24,7 @@
 		
 	</path>						
 	
-	<!-- Check directory is exists  -->
+	<!-- check directory is exists  -->
 	<condition property="path.src.exists">
     	<available file="src" type="dir"/>
 	</condition>
@@ -64,7 +64,7 @@
 		<!-- delete dir and classs file after create war  -->
 		<delete dir="${path.build}" />
 		
-		<!-- move original source to Backup path  -->
+		<!-- move original source to backup path  -->
 		<move todir="${path.source}" >  
 		        <fileset dir="./" excludes="*build.xml, **/${path.complie}/**, **/${path.source}/**" />  
 		</move> 				
