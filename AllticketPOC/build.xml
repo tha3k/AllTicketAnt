@@ -28,7 +28,7 @@
 	
 	<!-- check directory is exists condition -->
 	<condition property="path.src.exists">
-    	<available file="src" type="dir"/>
+    		<available file="src" type="dir"/>
 	</condition>
 	    
 	<!-- ## Task Create directory path  -->
