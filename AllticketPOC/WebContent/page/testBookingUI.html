@@ -402,7 +402,12 @@ $(document).ready(function() {
 	        
 	        result = result.replace('status=','');
 	        
-	        if(result=='true'){
+	        //result = result.inclu('"','');
+	        
+	        console.log("result "+result);
+	        
+	       // if(result=='true'){
+	    	if(result.includes('true')){
 	        	console.log("===kkkkk===");
 	        	isEnd = true;
 	        	$('.BookTicket').hide();
@@ -412,7 +417,7 @@ $(document).ready(function() {
 		        $('.result-booking-success').html("Your Reserve ID is : " +bkgID);
 		        $('.action-button-pay').show();
 		        $('#result').val("Y");
-	        }else if(result=='false'){
+	        }else if(result.includes('false')){
 	        	isEnd = true;
 	        	console.log("===oooo===");
 	        	$('.booking').show();
