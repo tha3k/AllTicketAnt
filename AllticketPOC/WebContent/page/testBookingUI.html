@@ -384,12 +384,15 @@ $(document).ready(function() {
 	        console.log("timeEnd "+timeEnd);
 	        
 	        result = result.replace('status=','');
+	        
 	        if(result=='true'){
 	        	console.log("===kkkkk===");
 	        	isEnd = true;
 	        	$('.BookTicket').hide();
 	        	$('.booking').show();
-		        $('.result-booking').html("Your Reserve ID is : " +bkgID);
+	        	$('.result-booking-fail').hide();
+	        	$('.result-booking-success').show();
+		        $('.result-booking-success').html("Your Reserve ID is : " +bkgID);
 		        $('.action-button-pay').show();
 		        $('#result').val("Y");
 	        }else if(result=='false'){
@@ -397,7 +400,8 @@ $(document).ready(function() {
 	        	console.log("===oooo===");
 	        	$('.booking').show();
 		        $('.BookTicket').hide();
-		        $('.result-booking').html("Reserve Error!!!");
+		        $('.result-booking-fail').show();
+		        $('.result-booking-fail').html("Reserve Not Availble");
 		        $('#result').val("N");
 	        }else{
 	        	console.log("===ppp===");
@@ -410,7 +414,8 @@ $(document).ready(function() {
 	        		if($('#result').val()==''){
 	    				$('.booking').show();
 	    		        $('.BookTicket').hide();
-	    		        $('.result-booking').html("Reserve Error!!!");
+	    		        $('.result-booking-fail').show();
+	    		        $('.result-booking-fail').html("Reserve Not Availble");
 	    		        $('#result').val("N");
 	    			}
 	        	}
@@ -424,7 +429,8 @@ $(document).ready(function() {
 	        //isEnd = true;
 	        $('.booking').show();
 	        $('.BookTicket').hide();
-	        $('.result-booking').html("Reserve Error!!!");
+	        $('.result-booking-fail').show();
+	        $('.result-booking-fail').html("Reserve Not Availble");
 	        $('#result').val("N");
 	    });
 		
@@ -1091,7 +1097,8 @@ $(document).ready(function() {
       <div class="booking" style="display:none;">
       	<div class="result" style="padding: 20px;">
           <div><div class="section-head">Result Reserve</div><br>
-          	<div class="result-booking"></div>
+          	<div class="result-booking-success" style="color:green;display:none;"></div>
+          	<div class="result-booking-fail" style="color:red;display:none;"></div>
           	<div class="action-button-pay" style="padding: 20px;text-align: center;display:none;">
 		    	<a class="btn btn-sm btn-secondary" id="pay-tickets-btn" data-scroll="true" href="#event-tickets">Pay Now</a>
 		    </div>
