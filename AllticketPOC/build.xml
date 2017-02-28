@@ -5,8 +5,9 @@
 	<basename property="my.project.name" file="${basedir}"/>	
 	<property name="path.lib.web.content" value="WebContent/WEB-INF/lib"/>
 	<property name="path.web.content" value="WebContent"/>				
-	<property name="path.complie" value="complie/war"/>
-	<property name="path.build" value="build/classes"/>	
+	<property name="path.complie" value="complie"/>
+	<property name="path.build" value="build"/>
+	<property name="path.source" value="soruce"/>
 	
 	<!-- create type of path variable, variable name is compile.classpath -->
 	<path id="compile.classpath"> 
@@ -28,7 +29,8 @@
 	<!-- Task Create directory path  -->
 	<target name="init">	
 		<mkdir dir="${path.build}"/>
-		<mkdir dir="${path.complie}"/>			
+		<mkdir dir="${path.complie}"/>
+		<mkdir dir="${path.source}"/>
 	</target>						
 		
 	<!-- ## Task Compile  -->
@@ -56,11 +58,15 @@
 			
 		</war>					
 		
+		<copy todir="${path.source}" >  
+		        <fileset dir="./" excludes="*build.xml, **/${path.complie}/**, **/${path.source}/**, **/${path.build}/**" />  
+		</copy> 
+		
 		<!-- delete dir and classs file before create war  -->
 		<delete dir="${path.build}" />
-		
+				
 		<!-- unwar  -->
-		<unwar dest="./" src="${path.complie}/${my.project.name}.war" />			
+		<unwar dest="./" src="${path.complie}/${my.project.name}.war" />
 		
 	</target>						
 	
