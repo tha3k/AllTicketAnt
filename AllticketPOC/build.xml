@@ -28,9 +28,7 @@
 	<!-- Task Create directory path  -->
 	<target name="init">	
 		<mkdir dir="${path.build}"/>
-		<mkdir dir="${path.complie}"/>
-		<delete dir="../../${my.project.name}" />
-		<mkdir dir="../../${my.project.name}"/>		
+		<mkdir dir="${path.complie}"/>			
 	</target>						
 		
 	<!-- ## Task Compile  -->
@@ -62,7 +60,7 @@
 		<delete dir="${path.build}" />
 		
 		<!-- unwar  -->
-		<unwar dest="../../${my.project.name}" src="${path.complie}/${my.project.name}.war" />			
+		<unwar dest="./" src="${path.complie}/${my.project.name}.war" />			
 		
 	</target>						
 	
