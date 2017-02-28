@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="run" name="AntBuild">				
+<project default="run" name="MyAntBuild">				
 	
 	<!-- context name session -->	
 	<basename property="my.project.name" file="${basedir}"/>
