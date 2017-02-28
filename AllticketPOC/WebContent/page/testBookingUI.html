@@ -429,6 +429,8 @@ $(document).ready(function() {
 	        	console.log("===ppp===");
 	        	//$('#result').val("");
 	        	if(new Date().getTime()<=timeEnd){
+	        		
+	        		setTimeout(function(){}, 1000); 
 	        		getBookingStatus (bkgID);
 	        	}else{
 	        		//console.log("Success rootGet : " + result);
