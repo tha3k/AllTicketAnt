@@ -2,12 +2,14 @@
 <project default="run" name="AntBuild">				
 	
 	<!-- Creat Session Value -->	
-	<basename property="my.project.name" file="${basedir}"/>	
-	<property name="path.lib.web.content" value="WebContent/WEB-INF/lib"/>
+	<basename property="my.project.name" file="${basedir}"/>		
 	<property name="path.web.content" value="WebContent"/>				
 	<property name="path.complie" value="complie"/>
 	<property name="path.build" value="build"/>
 	<property name="path.source" value="source"/>
+	
+	<!-- Internal Libs Reference -->
+	<property name="path.lib.web.content" value="WebContent/WEB-INF/lib"/>
 	
 	<!-- Create classpath session -->
 	<path id="compile.classpath"> 
