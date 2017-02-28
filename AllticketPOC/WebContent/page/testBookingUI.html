@@ -207,6 +207,10 @@ border-bottom: 1px solid #03A9F4;color: #03A9F4;font-weight: 700;
    
 <script type="text/javascript">
 $(document).ready(function() {
+
+	//var timeEnd = new Date(new Date().getTime()+(30000));
+	var timeEnd = new Date();
+	
 	$('.li-round').click(function(){
 		//alert(this.id);
 		$("#roundId").val(this.id);
@@ -333,6 +337,7 @@ $(document).ready(function() {
 	
 	function checkBKGStatus (bkgID){
 		
+		timeEnd = new Date(new Date().getTime()+(30000));
 		var isEnd = false;
 		
 		console.log("checkBKGStatus : Start > "+isEnd);
@@ -358,12 +363,23 @@ $(document).ready(function() {
 	}
 	
 	var now = new Date();
+	//var nowM = new Date().getTime();
 	
-	//var timeEnd = now.setMilliseconds(60000);
-	var timeEnd = now.setMilliseconds(10000);
+	//var timeEndww = now.setMilliseconds(60000);
+	//var timeEnd = now.setMilliseconds(nowM+30000);
+	
+	//var timeEnd = new Date(new Date().getTime()+(30000));
+	
+	//var utcSeconds = 1234567890;
+	//var timeEnd = new Date(0); // The 0 there is the key, which sets the date to the epoch
+	//timeEnd.setUTCSeconds(timeEndww);
 	
 	function getBookingStatus(bkgID){
 		console.log("getBookingStatus : Start > "+isEnd);
+		
+		//console.log("time now "+new Date().getTime());
+		//console.log("time now "+new Date());
+        console.log("timeEnd "+timeEnd);
 		
 		var isEnd = false;
 		
@@ -379,8 +395,9 @@ $(document).ready(function() {
 		apigClient.rootGet(params)
 	    .then(function doPoll(result){
 	    	var result = JSON.stringify(result.data);
-	        console.log("Success rootGet : " + result);
-	        console.log("time now "+new Date().getTime());
+	    	console.log("Success rootGet : " + JSON.stringify(result));
+	        console.log("Success rootGet data : " + result);
+	        console.log("time now "+new Date());
 	        console.log("timeEnd "+timeEnd);
 	        
 	        result = result.replace('status=','');
@@ -409,6 +426,7 @@ $(document).ready(function() {
 	        	if(new Date().getTime()<=timeEnd){
 	        		getBookingStatus (bkgID);
 	        	}else{
+	        		//console.log("Success rootGet : " + result);
 	        		console.log("isEnd = true");
 	        		//isEnd = true;
 	        		if($('#result').val()==''){
@@ -433,6 +451,7 @@ $(document).ready(function() {
 	        $('.result-booking-fail').html("Reserve Not Available");
 	        $('#result').val("N");
 	    });
+		
 		
 		console.log("getBookingStatus : end > "+isEnd);
 	}
