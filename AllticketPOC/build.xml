@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="run" name="HelloAntBuild">				
+<project default="run" name="AntBuild">				
 	
 	<!-- Creat Session Value -->	
 	<basename property="my.project.name" file="${basedir}"/>	
@@ -24,7 +24,7 @@
 	
 	<!-- Check directory is exists  -->
 	<condition property="path.src.exists">
-    	  	<available file="src" type="dir"/>
+    	<available file="src" type="dir"/>
 	</condition>
 	    
 	<!-- ## Task Create directory path  -->
@@ -38,12 +38,12 @@
 	<target name="compile" depends="init" if="path.src.exists">		
 		
 		<!-- compile source from src path (java to class)   -->
-			<javac srcdir="src" destdir="${path.build}" includeantruntime="false" debug="true">
-							
-				<!-- extend libraries import reference path -->
-				<classpath refid="compile.classpath"/>
-				
-			</javac>
+		<javac srcdir="src" destdir="${path.build}" includeantruntime="false" debug="true">
+						
+			<!-- extend libraries import reference path -->
+			<classpath refid="compile.classpath"/>
+			
+		</javac>
 			
 	</target>					
   
