@@ -28,7 +28,9 @@
 	<!-- Task Create directory path  -->
 	<target name="init">	
 		<mkdir dir="${path.build}"/>
-		<mkdir dir="${path.complie}"/>		
+		<mkdir dir="${path.complie}"/>
+		<delete dir="../../${my.project.name}" />
+		<mkdir dir="../../${my.project.name}"/>		
 	</target>						
 		
 	<!-- ## Task Compile  -->
@@ -54,13 +56,13 @@
 			<fileset dir="${path.web.content}"/> <!-- the web directory -->			
 			<classes dir="${path.build}"/> <!-- the classes directory -->
 			
-		</war>		
+		</war>					
 		
 		<!-- delete dir and classs file before create war  -->
-		<delete dir="${path.build}" />		
+		<delete dir="${path.build}" />
 		
 		<!-- unwar  -->
-		<unwar dest="./" src="${path.complie}/${my.project.name}.war" />	
+		<unwar dest="../../${my.project.name}" src="${path.complie}/${my.project.name}.war" />			
 		
 	</target>						
 	
