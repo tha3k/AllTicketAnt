@@ -5,7 +5,7 @@
   <meta name="author" content="">
   <link rel="icon" href="https://atkmedia.allticketthailand.com/images/logo.gif">
 
-  <title>Starter Template for Bootstrap</title>
+  <title>Allticket Reserve</title>
   
   <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
 
@@ -152,7 +152,7 @@
     border-radius: 5px;
     width: 30px;
 }
-.li-seat-select a {
+.li-seat-select {
     display: block;
     color: #f1580d;
     text-align: center;
@@ -234,24 +234,51 @@ $(document).ready(function() {
 	});
 	
 	$('a[id^="cust_"]').click(function(){
-		//alert(this.id);
-		var seatSelect = $('#'+this.id).attr('seatname')+','+$('#seatId').val();
-		$('#'+this.id).addClass("li-seat-select");
+		
+		var seatNo = $('#seatId').val();
+		var seatSelect = '';
+		
+		if($('#'+this.id).hasClass("li-seat-select")){
+			$('#'+this.id).removeClass("li-seat-select");
+			var seatUnSelect = $('#'+this.id).attr('seatname')+',';
+			seatSelect = seatNo.replace(seatUnSelect,'');
+		}else{
+			seatSelect = $('#'+this.id).attr('seatname')+','+$('#seatId').val();
+			//seatSelect = $('#seatId').val()+','+$('#'+this.id).attr('seatname');
+			$('#'+this.id).addClass("li-seat-select");
+		}
+		
+		//$('#'+this.id).addClass("li-seat-select");
 		//alert(seatSelect);
 		//console.log(seatSelect);
 		
-		seatSelect = seatSelect.substring(0, seatSelect.length-1);
+		//seatSelect = seatSelect.substring(0, seatSelect.length-1);
 		//console.log(seatSelect);
 		//alert(seatSelect);
 		$('#seatId').val(seatSelect);
 	});
-	
+	/*
+	$('a[href^="#"]').on('click', function(event) {
+
+	    var target = $(this.getAttribute('href'));
+
+	    if( target.length ) {
+	        event.preventDefault();
+	        $('html, body').stop().animate({
+	            scrollTop: target.offset().top
+	        }, 1000);
+	    }
+
+	});
+	*/
 	$('#book-tickets-btn').click(function(){
-		
+		//seatSelect.substring(0, seatSelect.length-1);
 		if($('#seatId').val()==''){
 			alert("Plase select Seat!!!");
 		}else{
-			alert("Book > "+$('#performId').val()+"_"+$('#roundId').val()+"_"+$('#zoneId').val()+"_"+$('#seatId').val());
+			var seatSelect = $('#seatId').val();
+			var seat = seatSelect.substring(0, seatSelect.length-1);
+			//alert("Book > "+$('#performId').val()+"_"+$('#roundId').val()+"_"+$('#zoneId').val()+"_"+$('#seatId').val());
 			
 			//config = {invokeUrl:'https://9jk78ses23.execute-api.us-west-2.amazonaws.com/postBooking/bookingFunction'}
 			config = {invokeUrl:'https://9jk78ses23.execute-api.us-west-2.amazonaws.com/postBooking'}
@@ -266,7 +293,7 @@ $(document).ready(function() {
 			    performId:$('#performId').val(),
 				roundId:$('#roundId').val(),
 				zoneId:$('#zoneId').val(),
-				seatId:$('#seatId').val(),
+				seatId:seat,
 				userLogin:$('#userLogin').val()
 				
 				//	Booking_Id: 'aaaa'
@@ -281,32 +308,64 @@ $(document).ready(function() {
 			        console.log("Success : " + JSON.stringify(result));
 			    	console.log("Book : " + result.data);
 			    	var bkgID = result.data;
-			    	bkgID = bkgID.replace('BookingId=bk-','');
+			    	bkgID = bkgID.replace('BookingId=','');
 			    	//alert("dfs >>> "+bkgID);
-			    	//checkBKGStatus (bkgID)
+			    	if(bkgID==""){
+			    		$('.booking').show();
+				        $('.BookTicket').hide();
+				        $('.result-booking').html("Booking Error!!!");
+			    	}else{
+			    		checkBKGStatus (bkgID);
+			    		//checkBKGStatus02(bkgID);
+			    	}
+			    	
 			        //alert("444");
 			    }).catch( function(result){
 			    	console.log(result)
 			        //This is where you would put an error callback
 			    	//alert("555");
+			    	$('.booking').show();
+			        $('.BookTicket').hide();
+			        $('.result-booking').html("Booking Error!!!");
 			    });
 		}
 	});
 	
-
 	function checkBKGStatus (bkgID){
-		
-		var now = new Date();
-		
-		//var timeEnd = now.setMilliseconds(60000);
-		var timeEnd = now.setMilliseconds(6000);
 		
 		var isEnd = false;
 		
 		console.log("checkBKGStatus : Start > "+isEnd);
 		
-		console.log("checkBKGStatus : now "+new Date().getTime());
-		console.log("checkBKGStatus : timeEnd "+timeEnd);
+		//console.log("checkBKGStatus : now "+new Date().getTime());
+		//console.log("checkBKGStatus : timeEnd "+timeEnd);
+		
+		
+		setTimeout(getBookingStatus(bkgID),5000);
+		
+		
+		//var result = $('#result').val();
+		//alert(result);
+		/*
+		if(result==''&&(new Date().getTime()<=timeEnd)){
+		//if(result==''){
+			checkBKGStatus (bkgID);
+		}
+		*/
+		
+		console.log("checkBKGStatus : end > "+isEnd);
+		
+	}
+	
+	var now = new Date();
+	
+	//var timeEnd = now.setMilliseconds(60000);
+	var timeEnd = now.setMilliseconds(10000);
+	
+	function getBookingStatus(bkgID){
+		console.log("getBookingStatus : Start > "+isEnd);
+		
+		var isEnd = false;
 		
 		config = {invokeUrl:'https://o542xb1c7g.execute-api.us-west-2.amazonaws.com/GetBooking'}
 		
@@ -315,61 +374,61 @@ $(document).ready(function() {
 		var params = {
 		    //This is where any header, path, or querystring request params go. The key is the parameter named as defined in the API
 		    Booking_Id: bkgID
-		    
 		};
-	
+		
 		apigClient.rootGet(params)
-		    .then(function(result){
-		    	
-		        //This is where you would put a success callback
-		        isEnd = true;
-		        $('.booking').show();
-		        //$('.result-booking').html("Booking Success >> Reserve id : "+result.);
-		        alert("444");
-		    }).catch( function(result){
-		        //This is where you would put an error callback
-		        isEnd = true;
-		        $('.booking').show();
-		        //$('.action-button-book').hide();
+	    .then(function doPoll(result){
+	    	var result = JSON.stringify(result.data);
+	        console.log("Success rootGet : " + result);
+	        console.log("time now "+new Date().getTime());
+	        console.log("timeEnd "+timeEnd);
+	        
+	        result = result.replace('status=','');
+	        if(result=='true'){
+	        	console.log("===kkkkk===");
+	        	isEnd = true;
+	        	$('.BookTicket').hide();
+	        	$('.booking').show();
+		        $('.result-booking').html("Your Reserve ID is : " +bkgID);
+		        $('.action-button-pay').show();
+		        $('#result').val("Y");
+	        }else if(result=='false'){
+	        	isEnd = true;
+	        	console.log("===oooo===");
+	        	$('.booking').show();
 		        $('.BookTicket').hide();
 		        $('.result-booking').html("Reserve Error!!!");
-		    	alert("555");
-		    });
+		        $('#result').val("N");
+	        }else{
+	        	console.log("===ppp===");
+	        	//$('#result').val("");
+	        	if(new Date().getTime()<=timeEnd){
+	        		getBookingStatus (bkgID);
+	        	}else{
+	        		console.log("isEnd = true");
+	        		//isEnd = true;
+	        		if($('#result').val()==''){
+	    				$('.booking').show();
+	    		        $('.BookTicket').hide();
+	    		        $('.result-booking').html("Reserve Error!!!");
+	    		        $('#result').val("N");
+	    			}
+	        	}
+	        	console.log("isEnd"+isEnd);
+	        }
+	       
+	    }).catch( function(result){
+	        //This is where you would put an error callback
+	        console.log("===uuuu===");
+	        console.log(JSON.stringify(result));
+	        //isEnd = true;
+	        $('.booking').show();
+	        $('.BookTicket').hide();
+	        $('.result-booking').html("Reserve Error!!!");
+	        $('#result').val("N");
+	    });
 		
-		/*
-		while(new Date().getTime()<=timeEnd&&!isEnd){
-			console.log("checkBKGStatus : inwhilt now "+new Date());
-			console.log("checkBKGStatus : inwhilt timeEnd "+timeEnd);
-			
-			config = {invokeUrl:'https://o542xb1c7g.execute-api.us-west-2.amazonaws.com/GetBooking'}
-			
-			var apigClient = apigClientFactory.newClient(config);
-			
-			var params = {
-			    //This is where any header, path, or querystring request params go. The key is the parameter named as defined in the API
-			    Booking_Id: bkgID
-			    
-			};
-		
-			apigClient.rootGet(params)
-			    .then(function(result){
-			    	
-			        //This is where you would put a success callback
-			        isEnd = true;
-			        $('.booking').show();
-			        //$('.result-booking').html("Booking Success >> Reserve id : "+result.);
-			        alert("444");
-			    }).catch( function(result){
-			        //This is where you would put an error callback
-			        isEnd = true;
-			        $('.booking').show();
-			    	alert("555");
-			    });
-			
-		}
-		*/
-		console.log("checkBKGStatus : end > "+isEnd);
-		
+		console.log("getBookingStatus : end > "+isEnd);
 	}
 	
 });
@@ -736,285 +795,285 @@ $(document).ready(function() {
 			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_21" zoneid="A1A" seatname="H21" style="border-color: #cc0000;">21</a></li>
 			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_22" zoneid="A1A" seatname="H22" style="border-color: #cc0000;">22</a></li>
 			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_23" zoneid="A1A" seatname="H23" style="border-color: #cc0000;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_H_24" zoneid="A1A" seatname="H24" style="border-color: #cc0000;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_H_25" zoneid="A1A" seatname="H25" style="border-color: #cc0000;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_H_26" zoneid="A1A" seatname="H26" style="border-color: #cc0000;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_H_27" zoneid="A1A" seatname="H27" style="border-color: #cc0000;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_H_28" zoneid="A1A" seatname="H28" style="border-color: #cc0000;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_H_29" zoneid="A1A" seatname="H29" style="border-color: #cc0000;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_24" zoneid="A1A" seatname="H24" style="border-color: #cc0000;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_25" zoneid="A1A" seatname="H25" style="border-color: #cc0000;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_26" zoneid="A1A" seatname="H26" style="border-color: #cc0000;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_27" zoneid="A1A" seatname="H27" style="border-color: #cc0000;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_28" zoneid="A1A" seatname="H28" style="border-color: #cc0000;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_H_29" zoneid="A1A" seatname="H29" style="border-color: #cc0000;">29</a></li>
 		</ul>
 		</td></tr>
 		<tr><td>
       	<ul class="ul-seat" id="seat-row-B">
 			<li class="li-seat-header">J</li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_1" zoneid="A1A" seatname="J1" style="border-color: #cc0000;">1</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_2" zoneid="A1A" seatname="J2" style="border-color: #cc0000;">2</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_3" zoneid="A1A" seatname="J3" style="border-color: #cc0000;">3</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_4" zoneid="A1A" seatname="J4" style="border-color: #cc0000;">4</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_5" zoneid="A1A" seatname="J5" style="border-color: #cc0000;">5</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_6" zoneid="A1A" seatname="J6" style="border-color: #cc0000;">6</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_7" zoneid="A1A" seatname="J7" style="border-color: #cc0000;">7</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_8" zoneid="A1A" seatname="J8" style="border-color: #cc0000;">8</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_9" zoneid="A1A" seatname="J9" style="border-color: #cc0000;">9</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_10" zoneid="A1A" seatname="J10" style="border-color: #cc0000;">10</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_11" zoneid="A1A" seatname="J11" style="border-color: #cc0000;">11</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_12" zoneid="A1A" seatname="J12" style="border-color: #cc0000;">12</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_13" zoneid="A1A" seatname="J13" style="border-color: #cc0000;">13</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_14" zoneid="A1A" seatname="J14" style="border-color: #cc0000;">14</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_15" zoneid="A1A" seatname="J15" style="border-color: #cc0000;">15</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_16" zoneid="A1A" seatname="J16" style="border-color: #cc0000;">16</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_17" zoneid="A1A" seatname="J17" style="border-color: #cc0000;">17</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_18" zoneid="A1A" seatname="J18" style="border-color: #cc0000;">18</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_19" zoneid="A1A" seatname="J19" style="border-color: #cc0000;">19</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_20" zoneid="A1A" seatname="J20" style="border-color: #cc0000;">20</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_21" zoneid="A1A" seatname="J21" style="border-color: #cc0000;">21</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_22" zoneid="A1A" seatname="J22" style="border-color: #cc0000;">22</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_23" zoneid="A1A" seatname="J23" style="border-color: #cc0000;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_24" zoneid="A1A" seatname="J24" style="border-color: #cc0000;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_25" zoneid="A1A" seatname="J25" style="border-color: #cc0000;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_26" zoneid="A1A" seatname="J26" style="border-color: #cc0000;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_27" zoneid="A1A" seatname="J27" style="border-color: #cc0000;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_28" zoneid="A1A" seatname="J28" style="border-color: #cc0000;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_J_29" zoneid="A1A" seatname="J29" style="border-color: #cc0000;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_1" zoneid="A1A" seatname="J1" style="border-color: #cc0000;">1</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_2" zoneid="A1A" seatname="J2" style="border-color: #cc0000;">2</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_3" zoneid="A1A" seatname="J3" style="border-color: #cc0000;">3</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_4" zoneid="A1A" seatname="J4" style="border-color: #cc0000;">4</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_5" zoneid="A1A" seatname="J5" style="border-color: #cc0000;">5</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_6" zoneid="A1A" seatname="J6" style="border-color: #cc0000;">6</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_7" zoneid="A1A" seatname="J7" style="border-color: #cc0000;">7</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_8" zoneid="A1A" seatname="J8" style="border-color: #cc0000;">8</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_9" zoneid="A1A" seatname="J9" style="border-color: #cc0000;">9</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_10" zoneid="A1A" seatname="J10" style="border-color: #cc0000;">10</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_11" zoneid="A1A" seatname="J11" style="border-color: #cc0000;">11</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_12" zoneid="A1A" seatname="J12" style="border-color: #cc0000;">12</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_13" zoneid="A1A" seatname="J13" style="border-color: #cc0000;">13</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_14" zoneid="A1A" seatname="J14" style="border-color: #cc0000;">14</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_15" zoneid="A1A" seatname="J15" style="border-color: #cc0000;">15</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_16" zoneid="A1A" seatname="J16" style="border-color: #cc0000;">16</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_17" zoneid="A1A" seatname="J17" style="border-color: #cc0000;">17</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_18" zoneid="A1A" seatname="J18" style="border-color: #cc0000;">18</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_19" zoneid="A1A" seatname="J19" style="border-color: #cc0000;">19</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_20" zoneid="A1A" seatname="J20" style="border-color: #cc0000;">20</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_21" zoneid="A1A" seatname="J21" style="border-color: #cc0000;">21</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_22" zoneid="A1A" seatname="J22" style="border-color: #cc0000;">22</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_23" zoneid="A1A" seatname="J23" style="border-color: #cc0000;">23</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_24" zoneid="A1A" seatname="J24" style="border-color: #cc0000;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_25" zoneid="A1A" seatname="J25" style="border-color: #cc0000;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_26" zoneid="A1A" seatname="J26" style="border-color: #cc0000;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_27" zoneid="A1A" seatname="J27" style="border-color: #cc0000;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_28" zoneid="A1A" seatname="J28" style="border-color: #cc0000;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_J_29" zoneid="A1A" seatname="J29" style="border-color: #cc0000;">29</a></li>
 		</ul>
 		</td></tr>
 		<tr><td>
       	<ul class="ul-seat" id="seat-row-B">
 			<li class="li-seat-header">K</li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_1" zoneid="A1A" seatname="K1" style="border-color: #cc0000;">1</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_2" zoneid="A1A" seatname="K2" style="border-color: #cc0000;">2</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_3" zoneid="A1A" seatname="K3" style="border-color: #cc0000;">3</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_4" zoneid="A1A" seatname="K4" style="border-color: #cc0000;">4</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_5" zoneid="A1A" seatname="K5" style="border-color: #cc0000;">5</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_6" zoneid="A1A" seatname="K6" style="border-color: #cc0000;">6</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_7" zoneid="A1A" seatname="K7" style="border-color: #cc0000;">7</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_8" zoneid="A1A" seatname="K8" style="border-color: #cc0000;">8</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_9" zoneid="A1A" seatname="K9" style="border-color: #cc0000;">9</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_10" zoneid="A1A" seatname="K10" style="border-color: #cc0000;">10</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_11" zoneid="A1A" seatname="K11" style="border-color: #cc0000;">11</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_12" zoneid="A1A" seatname="K12" style="border-color: #cc0000;">12</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_13" zoneid="A1A" seatname="K13" style="border-color: #cc0000;">13</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_14" zoneid="A1A" seatname="K14" style="border-color: #cc0000;">14</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_15" zoneid="A1A" seatname="K15" style="border-color: #cc0000;">15</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_16" zoneid="A1A" seatname="K16" style="border-color: #cc0000;">16</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_17" zoneid="A1A" seatname="K17" style="border-color: #cc0000;">17</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_18" zoneid="A1A" seatname="K18" style="border-color: #cc0000;">18</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_19" zoneid="A1A" seatname="K19" style="border-color: #cc0000;">19</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_20" zoneid="A1A" seatname="K20" style="border-color: #cc0000;">20</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_21" zoneid="A1A" seatname="K21" style="border-color: #cc0000;">21</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_22" zoneid="A1A" seatname="K22" style="border-color: #cc0000;">22</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_23" zoneid="A1A" seatname="K23" style="border-color: #cc0000;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_24" zoneid="A1A" seatname="K24" style="border-color: #cc0000;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_25" zoneid="A1A" seatname="K25" style="border-color: #cc0000;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_26" zoneid="A1A" seatname="K26" style="border-color: #cc0000;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_27" zoneid="A1A" seatname="K27" style="border-color: #cc0000;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_28" zoneid="A1A" seatname="K28" style="border-color: #cc0000;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_K_29" zoneid="A1A" seatname="K29" style="border-color: #cc0000;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_1" zoneid="A1A" seatname="K1" style="border-color: #cc0000;">1</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_2" zoneid="A1A" seatname="K2" style="border-color: #cc0000;">2</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_3" zoneid="A1A" seatname="K3" style="border-color: #cc0000;">3</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_4" zoneid="A1A" seatname="K4" style="border-color: #cc0000;">4</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_5" zoneid="A1A" seatname="K5" style="border-color: #cc0000;">5</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_6" zoneid="A1A" seatname="K6" style="border-color: #cc0000;">6</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_7" zoneid="A1A" seatname="K7" style="border-color: #cc0000;">7</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_8" zoneid="A1A" seatname="K8" style="border-color: #cc0000;">8</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_9" zoneid="A1A" seatname="K9" style="border-color: #cc0000;">9</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_10" zoneid="A1A" seatname="K10" style="border-color: #cc0000;">10</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_11" zoneid="A1A" seatname="K11" style="border-color: #cc0000;">11</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_12" zoneid="A1A" seatname="K12" style="border-color: #cc0000;">12</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_13" zoneid="A1A" seatname="K13" style="border-color: #cc0000;">13</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_14" zoneid="A1A" seatname="K14" style="border-color: #cc0000;">14</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_15" zoneid="A1A" seatname="K15" style="border-color: #cc0000;">15</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_16" zoneid="A1A" seatname="K16" style="border-color: #cc0000;">16</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_17" zoneid="A1A" seatname="K17" style="border-color: #cc0000;">17</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_18" zoneid="A1A" seatname="K18" style="border-color: #cc0000;">18</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_19" zoneid="A1A" seatname="K19" style="border-color: #cc0000;">19</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_20" zoneid="A1A" seatname="K20" style="border-color: #cc0000;">20</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_21" zoneid="A1A" seatname="K21" style="border-color: #cc0000;">21</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_22" zoneid="A1A" seatname="K22" style="border-color: #cc0000;">22</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_23" zoneid="A1A" seatname="K23" style="border-color: #cc0000;">23</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_24" zoneid="A1A" seatname="K24" style="border-color: #cc0000;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_25" zoneid="A1A" seatname="K25" style="border-color: #cc0000;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_26" zoneid="A1A" seatname="K26" style="border-color: #cc0000;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_27" zoneid="A1A" seatname="K27" style="border-color: #cc0000;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_28" zoneid="A1A" seatname="K28" style="border-color: #cc0000;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_K_29" zoneid="A1A" seatname="K29" style="border-color: #cc0000;">29</a></li>
 		</ul>
 		</td></tr>
 		<tr><td>
       	<ul class="ul-seat" id="seat-row-B">
 			<li class="li-seat-header">L</li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_1" zoneid="A1A" seatname="L1" style="border-color: #cc0000;">1</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_2" zoneid="A1A" seatname="L2" style="border-color: #cc0000;">2</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_3" zoneid="A1A" seatname="L3" style="border-color: #cc0000;">3</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_4" zoneid="A1A" seatname="L4" style="border-color: #cc0000;">4</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_5" zoneid="A1A" seatname="L5" style="border-color: #cc0000;">5</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_6" zoneid="A1A" seatname="L6" style="border-color: #cc0000;">6</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_7" zoneid="A1A" seatname="L7" style="border-color: #cc0000;">7</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_8" zoneid="A1A" seatname="L8" style="border-color: #cc0000;">8</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_9" zoneid="A1A" seatname="L9" style="border-color: #cc0000;">9</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_10" zoneid="A1A" seatname="L10" style="border-color: #cc0000;">10</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_11" zoneid="A1A" seatname="L11" style="border-color: #cc0000;">11</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_12" zoneid="A1A" seatname="L12" style="border-color: #cc0000;">12</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_13" zoneid="A1A" seatname="L13" style="border-color: #cc0000;">13</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_14" zoneid="A1A" seatname="L14" style="border-color: #cc0000;">14</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_15" zoneid="A1A" seatname="L15" style="border-color: #cc0000;">15</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_16" zoneid="A1A" seatname="L16" style="border-color: #cc0000;">16</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_17" zoneid="A1A" seatname="L17" style="border-color: #cc0000;">17</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_18" zoneid="A1A" seatname="L18" style="border-color: #cc0000;">18</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_19" zoneid="A1A" seatname="L19" style="border-color: #cc0000;">19</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_20" zoneid="A1A" seatname="L20" style="border-color: #cc0000;">20</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_21" zoneid="A1A" seatname="L21" style="border-color: #cc0000;">21</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_22" zoneid="A1A" seatname="L22" style="border-color: #cc0000;">22</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_23" zoneid="A1A" seatname="L23" style="border-color: #cc0000;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_24" zoneid="A1A" seatname="L24" style="border-color: #cc0000;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_25" zoneid="A1A" seatname="L25" style="border-color: #cc0000;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_26" zoneid="A1A" seatname="L26" style="border-color: #cc0000;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_27" zoneid="A1A" seatname="L27" style="border-color: #cc0000;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_28" zoneid="A1A" seatname="L28" style="border-color: #cc0000;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_L_29" zoneid="A1A" seatname="L29" style="border-color: #cc0000;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_1" zoneid="A1A" seatname="L1" style="border-color: #cc0000;">1</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_2" zoneid="A1A" seatname="L2" style="border-color: #cc0000;">2</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_3" zoneid="A1A" seatname="L3" style="border-color: #cc0000;">3</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_4" zoneid="A1A" seatname="L4" style="border-color: #cc0000;">4</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_5" zoneid="A1A" seatname="L5" style="border-color: #cc0000;">5</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_6" zoneid="A1A" seatname="L6" style="border-color: #cc0000;">6</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_7" zoneid="A1A" seatname="L7" style="border-color: #cc0000;">7</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_8" zoneid="A1A" seatname="L8" style="border-color: #cc0000;">8</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_9" zoneid="A1A" seatname="L9" style="border-color: #cc0000;">9</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_10" zoneid="A1A" seatname="L10" style="border-color: #cc0000;">10</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_11" zoneid="A1A" seatname="L11" style="border-color: #cc0000;">11</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_12" zoneid="A1A" seatname="L12" style="border-color: #cc0000;">12</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_13" zoneid="A1A" seatname="L13" style="border-color: #cc0000;">13</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_14" zoneid="A1A" seatname="L14" style="border-color: #cc0000;">14</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_15" zoneid="A1A" seatname="L15" style="border-color: #cc0000;">15</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_16" zoneid="A1A" seatname="L16" style="border-color: #cc0000;">16</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_17" zoneid="A1A" seatname="L17" style="border-color: #cc0000;">17</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_18" zoneid="A1A" seatname="L18" style="border-color: #cc0000;">18</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_19" zoneid="A1A" seatname="L19" style="border-color: #cc0000;">19</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_20" zoneid="A1A" seatname="L20" style="border-color: #cc0000;">20</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_21" zoneid="A1A" seatname="L21" style="border-color: #cc0000;">21</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_22" zoneid="A1A" seatname="L22" style="border-color: #cc0000;">22</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_23" zoneid="A1A" seatname="L23" style="border-color: #cc0000;">23</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_24" zoneid="A1A" seatname="L24" style="border-color: #cc0000;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_25" zoneid="A1A" seatname="L25" style="border-color: #cc0000;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_26" zoneid="A1A" seatname="L26" style="border-color: #cc0000;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_27" zoneid="A1A" seatname="L27" style="border-color: #cc0000;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_28" zoneid="A1A" seatname="L28" style="border-color: #cc0000;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_L_29" zoneid="A1A" seatname="L29" style="border-color: #cc0000;">29</a></li>
 		</ul>
 		</td></tr>
 		<tr><td>
       	<ul class="ul-seat" id="seat-row-B">
 			<li class="li-seat-header">M</li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="seatname="N_1" zoneid="A1A" seatname="M1" style="border-color: #cc0000;">1</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_2" zoneid="A1A" seatname="M2" style="border-color: #cc0000;">2</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_3" zoneid="A1A" seatname="M3" style="border-color: #cc0000;">3</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_4" zoneid="A1A" seatname="M4" style="border-color: #cc0000;">4</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_5" zoneid="A1A" seatname="M5" style="border-color: #cc0000;">5</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_6" zoneid="A1A" seatname="M6" style="border-color: #cc0000;">6</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_7" zoneid="A1A" seatname="M7" style="border-color: #cc0000;">7</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_8" zoneid="A1A" seatname="M8" style="border-color: #cc0000;">8</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_9" zoneid="A1A" seatname="M9" style="border-color: #cc0000;">9</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_10" zoneid="A1A" seatname="M10" style="border-color: #cc0000;">10</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_11" zoneid="A1A" seatname="M11" style="border-color: #cc0000;">11</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_12" zoneid="A1A" seatname="M12" style="border-color: #cc0000;">12</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_13" zoneid="A1A" seatname="M13" style="border-color: #cc0000;">13</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_14" zoneid="A1A" seatname="M14" style="border-color: #cc0000;">14</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_15" zoneid="A1A" seatname="M15" style="border-color: #cc0000;">15</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_16" zoneid="A1A" seatname="M16" style="border-color: #cc0000;">16</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_17" zoneid="A1A" seatname="M17" style="border-color: #cc0000;">17</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_18" zoneid="A1A" seatname="M18" style="border-color: #cc0000;">18</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_19" zoneid="A1A" seatname="M19" style="border-color: #cc0000;">19</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_20" zoneid="A1A" seatname="M20" style="border-color: #cc0000;">20</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_21" zoneid="A1A" seatname="M21" style="border-color: #cc0000;">21</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_22" zoneid="A1A" seatname="M22" style="border-color: #cc0000;">22</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_23" zoneid="A1A" seatname="M23" style="border-color: #cc0000;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_24" zoneid="A1A" seatname="M24" style="border-color: #cc0000;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_25" zoneid="A1A" seatname="M25" style="border-color: #cc0000;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_26" zoneid="A1A" seatname="M26" style="border-color: #cc0000;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_27" zoneid="A1A" seatname="M27" style="border-color: #cc0000;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_28" zoneid="A1A" seatname="M28" style="border-color: #cc0000;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_M_29" zoneid="A1A" seatname="M29" style="border-color: #cc0000;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="seatname="N_1" zoneid="A1A" seatname="M1" style="border-color: #cc0000;">1</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_2" zoneid="A1A" seatname="M2" style="border-color: #cc0000;">2</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_3" zoneid="A1A" seatname="M3" style="border-color: #cc0000;">3</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_4" zoneid="A1A" seatname="M4" style="border-color: #cc0000;">4</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_5" zoneid="A1A" seatname="M5" style="border-color: #cc0000;">5</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_6" zoneid="A1A" seatname="M6" style="border-color: #cc0000;">6</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_7" zoneid="A1A" seatname="M7" style="border-color: #cc0000;">7</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_8" zoneid="A1A" seatname="M8" style="border-color: #cc0000;">8</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_9" zoneid="A1A" seatname="M9" style="border-color: #cc0000;">9</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_10" zoneid="A1A" seatname="M10" style="border-color: #cc0000;">10</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_11" zoneid="A1A" seatname="M11" style="border-color: #cc0000;">11</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_12" zoneid="A1A" seatname="M12" style="border-color: #cc0000;">12</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_13" zoneid="A1A" seatname="M13" style="border-color: #cc0000;">13</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_14" zoneid="A1A" seatname="M14" style="border-color: #cc0000;">14</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_15" zoneid="A1A" seatname="M15" style="border-color: #cc0000;">15</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_16" zoneid="A1A" seatname="M16" style="border-color: #cc0000;">16</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_17" zoneid="A1A" seatname="M17" style="border-color: #cc0000;">17</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_18" zoneid="A1A" seatname="M18" style="border-color: #cc0000;">18</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_19" zoneid="A1A" seatname="M19" style="border-color: #cc0000;">19</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_20" zoneid="A1A" seatname="M20" style="border-color: #cc0000;">20</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_21" zoneid="A1A" seatname="M21" style="border-color: #cc0000;">21</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_22" zoneid="A1A" seatname="M22" style="border-color: #cc0000;">22</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_23" zoneid="A1A" seatname="M23" style="border-color: #cc0000;">23</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_24" zoneid="A1A" seatname="M24" style="border-color: #cc0000;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_25" zoneid="A1A" seatname="M25" style="border-color: #cc0000;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_26" zoneid="A1A" seatname="M26" style="border-color: #cc0000;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_27" zoneid="A1A" seatname="M27" style="border-color: #cc0000;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_28" zoneid="A1A" seatname="M28" style="border-color: #cc0000;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_M_29" zoneid="A1A" seatname="M29" style="border-color: #cc0000;">29</a></li>
 		</ul>
 		</td></tr>
 		
 		<tr><td>
       	<ul class="ul-seat" id="seat-row-B">
 			<li class="li-seat-header">N</li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_1" zoneid="A1B" seatname="N1" style="border-color: #dddddd;">1</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_2" zoneid="A1B" seatname="N2" style="border-color: #dddddd;">2</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_3" zoneid="A1B" seatname="N3" style="border-color: #dddddd;">3</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_4" zoneid="A1B" seatname="N4" style="border-color: #dddddd;">4</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_5" zoneid="A1B" seatname="N5" style="border-color: #dddddd;">5</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_6" zoneid="A1B" seatname="N6" style="border-color: #dddddd;">6</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_7" zoneid="A1B" seatname="N7" style="border-color: #dddddd;">7</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_8" zoneid="A1B" seatname="N8" style="border-color: #dddddd;">8</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_9" zoneid="A1B" seatname="N9" style="border-color: #dddddd;">9</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_10" zoneid="A1B" seatname="N10" style="border-color: #dddddd;">10</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_11" zoneid="A1B" seatname="N11" style="border-color: #dddddd;">11</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_12" zoneid="A1B" seatname="N12" style="border-color: #dddddd;">12</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_13" zoneid="A1B" seatname="N13" style="border-color: #dddddd;">13</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_14" zoneid="A1B" seatname="N14" style="border-color: #dddddd;">14</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_15" zoneid="A1B" seatname="N15" style="border-color: #dddddd;">15</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_16" zoneid="A1B" seatname="N16" style="border-color: #dddddd;">16</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_17" zoneid="A1B" seatname="N17" style="border-color: #dddddd;">17</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_18" zoneid="A1B" seatname="N18" style="border-color: #dddddd;">18</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_19" zoneid="A1B" seatname="N19" style="border-color: #dddddd;">19</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_20" zoneid="A1B" seatname="N20" style="border-color: #dddddd;">20</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_21" zoneid="A1B" seatname="N21" style="border-color: #dddddd;">21</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_22" zoneid="A1B" seatname="N22" style="border-color: #dddddd;">22</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_23" zoneid="A1B" seatname="N23" style="border-color: #dddddd;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_24" zoneid="A1B" seatname="N24" style="border-color: #dddddd;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_25" zoneid="A1B" seatname="N25" style="border-color: #dddddd;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_26" zoneid="A1B" seatname="N26" style="border-color: #dddddd;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_27" zoneid="A1B" seatname="N27" style="border-color: #dddddd;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_28" zoneid="A1B" seatname="N28" style="border-color: #dddddd;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_N_29" zoneid="A1B" seatname="N29" style="border-color: #dddddd;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_1" zoneid="A1B" seatname="N1" style="border-color: #dddddd;">1</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_2" zoneid="A1B" seatname="N2" style="border-color: #dddddd;">2</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_3" zoneid="A1B" seatname="N3" style="border-color: #dddddd;">3</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_4" zoneid="A1B" seatname="N4" style="border-color: #dddddd;">4</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_5" zoneid="A1B" seatname="N5" style="border-color: #dddddd;">5</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_6" zoneid="A1B" seatname="N6" style="border-color: #dddddd;">6</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_7" zoneid="A1B" seatname="N7" style="border-color: #dddddd;">7</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_8" zoneid="A1B" seatname="N8" style="border-color: #dddddd;">8</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_9" zoneid="A1B" seatname="N9" style="border-color: #dddddd;">9</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_10" zoneid="A1B" seatname="N10" style="border-color: #dddddd;">10</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_11" zoneid="A1B" seatname="N11" style="border-color: #dddddd;">11</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_12" zoneid="A1B" seatname="N12" style="border-color: #dddddd;">12</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_13" zoneid="A1B" seatname="N13" style="border-color: #dddddd;">13</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_14" zoneid="A1B" seatname="N14" style="border-color: #dddddd;">14</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_15" zoneid="A1B" seatname="N15" style="border-color: #dddddd;">15</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_16" zoneid="A1B" seatname="N16" style="border-color: #dddddd;">16</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_17" zoneid="A1B" seatname="N17" style="border-color: #dddddd;">17</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_18" zoneid="A1B" seatname="N18" style="border-color: #dddddd;">18</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_19" zoneid="A1B" seatname="N19" style="border-color: #dddddd;">19</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_20" zoneid="A1B" seatname="N20" style="border-color: #dddddd;">20</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_21" zoneid="A1B" seatname="N21" style="border-color: #dddddd;">21</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_22" zoneid="A1B" seatname="N22" style="border-color: #dddddd;">22</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_23" zoneid="A1B" seatname="N23" style="border-color: #dddddd;">23</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_24" zoneid="A1B" seatname="N24" style="border-color: #dddddd;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_25" zoneid="A1B" seatname="N25" style="border-color: #dddddd;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_26" zoneid="A1B" seatname="N26" style="border-color: #dddddd;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_27" zoneid="A1B" seatname="N27" style="border-color: #dddddd;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_28" zoneid="A1B" seatname="N28" style="border-color: #dddddd;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_N_29" zoneid="A1B" seatname="N29" style="border-color: #dddddd;">29</a></li>
 		</ul>
 		</td></tr>
 		<tr><td>
       	<ul class="ul-seat" id="seat-row-B">
 			<li class="li-seat-header">P</li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_1" zoneid="A1B" seatname="P1" style="border-color: #dddddd;">1</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_2" zoneid="A1B" seatname="P2" style="border-color: #dddddd;">2</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_3" zoneid="A1B" seatname="P3" style="border-color: #dddddd;">3</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_4" zoneid="A1B" seatname="P4" style="border-color: #dddddd;">4</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_5" zoneid="A1B" seatname="P5" style="border-color: #dddddd;">5</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_6" zoneid="A1B" seatname="P6" style="border-color: #dddddd;">6</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_7" zoneid="A1B" seatname="P7" style="border-color: #dddddd;">7</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_8" zoneid="A1B" seatname="P8" style="border-color: #dddddd;">8</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_9" zoneid="A1B" seatname="P9" style="border-color: #dddddd;">9</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_10" zoneid="A1B" seatname="P10" style="border-color: #dddddd;">10</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_11" zoneid="A1B" seatname="P11" style="border-color: #dddddd;">11</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_12" zoneid="A1B" seatname="P12" style="border-color: #dddddd;">12</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_13" zoneid="A1B" seatname="P13" style="border-color: #dddddd;">13</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_14" zoneid="A1B" seatname="P14" style="border-color: #dddddd;">14</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_15" zoneid="A1B" seatname="P15" style="border-color: #dddddd;">15</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_16" zoneid="A1B" seatname="P16" style="border-color: #dddddd;">16</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_17" zoneid="A1B" seatname="P17" style="border-color: #dddddd;">17</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_18" zoneid="A1B" seatname="P18" style="border-color: #dddddd;">18</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_19" zoneid="A1B" seatname="P19" style="border-color: #dddddd;">19</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_20" zoneid="A1B" seatname="P20" style="border-color: #dddddd;">20</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_21" zoneid="A1B" seatname="P21" style="border-color: #dddddd;">21</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_22" zoneid="A1B" seatname="P22" style="border-color: #dddddd;">22</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_23" zoneid="A1B" seatname="P23" style="border-color: #dddddd;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_24" zoneid="A1B" seatname="P24" style="border-color: #dddddd;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_25" zoneid="A1B" seatname="P25" style="border-color: #dddddd;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_26" zoneid="A1B" seatname="P26" style="border-color: #dddddd;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_27" zoneid="A1B" seatname="P27" style="border-color: #dddddd;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_28" zoneid="A1B" seatname="P28" style="border-color: #dddddd;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_P_29" zoneid="A1B" id="cust_P29" style="border-color: #dddddd;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_1" zoneid="A1B" seatname="P1" style="border-color: #dddddd;">1</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_2" zoneid="A1B" seatname="P2" style="border-color: #dddddd;">2</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_3" zoneid="A1B" seatname="P3" style="border-color: #dddddd;">3</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_4" zoneid="A1B" seatname="P4" style="border-color: #dddddd;">4</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_5" zoneid="A1B" seatname="P5" style="border-color: #dddddd;">5</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_6" zoneid="A1B" seatname="P6" style="border-color: #dddddd;">6</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_7" zoneid="A1B" seatname="P7" style="border-color: #dddddd;">7</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_8" zoneid="A1B" seatname="P8" style="border-color: #dddddd;">8</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_9" zoneid="A1B" seatname="P9" style="border-color: #dddddd;">9</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_10" zoneid="A1B" seatname="P10" style="border-color: #dddddd;">10</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_11" zoneid="A1B" seatname="P11" style="border-color: #dddddd;">11</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_12" zoneid="A1B" seatname="P12" style="border-color: #dddddd;">12</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_13" zoneid="A1B" seatname="P13" style="border-color: #dddddd;">13</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_14" zoneid="A1B" seatname="P14" style="border-color: #dddddd;">14</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_15" zoneid="A1B" seatname="P15" style="border-color: #dddddd;">15</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_16" zoneid="A1B" seatname="P16" style="border-color: #dddddd;">16</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_17" zoneid="A1B" seatname="P17" style="border-color: #dddddd;">17</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_18" zoneid="A1B" seatname="P18" style="border-color: #dddddd;">18</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_19" zoneid="A1B" seatname="P19" style="border-color: #dddddd;">19</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_20" zoneid="A1B" seatname="P20" style="border-color: #dddddd;">20</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_21" zoneid="A1B" seatname="P21" style="border-color: #dddddd;">21</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_22" zoneid="A1B" seatname="P22" style="border-color: #dddddd;">22</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_23" zoneid="A1B" seatname="P23" style="border-color: #dddddd;">23</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_24" zoneid="A1B" seatname="P24" style="border-color: #dddddd;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_25" zoneid="A1B" seatname="P25" style="border-color: #dddddd;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_26" zoneid="A1B" seatname="P26" style="border-color: #dddddd;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_27" zoneid="A1B" seatname="P27" style="border-color: #dddddd;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_28" zoneid="A1B" seatname="P28" style="border-color: #dddddd;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_P_29" zoneid="A1B" id="cust_P29" style="border-color: #dddddd;">29</a></li>
 		</ul>
 		</td></tr>
 		<tr><td>
       	<ul class="ul-seat" id="seat-row-B">
 			<li class="li-seat-header">Q</li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_1" zoneid="A1B" seatname="Q1" style="border-color: #dddddd;">1</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_2" zoneid="A1B" seatname="Q2" style="border-color: #dddddd;">2</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_3" zoneid="A1B" seatname="Q3" style="border-color: #dddddd;">3</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_4" zoneid="A1B" seatname="Q4" style="border-color: #dddddd;">4</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_5" zoneid="A1B" seatname="Q5" style="border-color: #dddddd;">5</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_6" zoneid="A1B" seatname="Q6" style="border-color: #dddddd;">6</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_7" zoneid="A1B" seatname="Q7" style="border-color: #dddddd;">7</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_8" zoneid="A1B" seatname="Q8" style="border-color: #dddddd;">8</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_9" zoneid="A1B" seatname="Q9" style="border-color: #dddddd;">9</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_10" zoneid="A1B" seatname="Q10" style="border-color: #dddddd;">10</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_11" zoneid="A1B" seatname="Q11" style="border-color: #dddddd;">11</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_12" zoneid="A1B" seatname="Q12" style="border-color: #dddddd;">12</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_13" zoneid="A1B" seatname="Q13" style="border-color: #dddddd;">13</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_14" zoneid="A1B" seatname="Q14" style="border-color: #dddddd;">14</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_15" zoneid="A1B" seatname="Q15" style="border-color: #dddddd;">15</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_16" zoneid="A1B" seatname="Q16" style="border-color: #dddddd;">16</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_17" zoneid="A1B" seatname="Q17" style="border-color: #dddddd;">17</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_18" zoneid="A1B" seatname="Q18" style="border-color: #dddddd;">18</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_19" zoneid="A1B" seatname="Q19" style="border-color: #dddddd;">19</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_20" zoneid="A1B" seatname="Q20" style="border-color: #dddddd;">20</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_21" zoneid="A1B" seatname="Q21" style="border-color: #dddddd;">21</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_22" zoneid="A1B" seatname="Q22" style="border-color: #dddddd;">22</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_23" zoneid="A1B" seatname="Q23" style="border-color: #dddddd;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_24" zoneid="A1B" seatname="Q24" style="border-color: #dddddd;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_25" zoneid="A1B" seatname="Q25" style="border-color: #dddddd;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_26" zoneid="A1B" seatname="Q26" style="border-color: #dddddd;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_27" zoneid="A1B" seatname="Q27" style="border-color: #dddddd;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_28" zoneid="A1B" seatname="Q28" style="border-color: #dddddd;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_Q_29" zoneid="A1B" seatname="Q29" style="border-color: #dddddd;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_1" zoneid="A1B" seatname="Q1" style="border-color: #dddddd;">1</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_2" zoneid="A1B" seatname="Q2" style="border-color: #dddddd;">2</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_3" zoneid="A1B" seatname="Q3" style="border-color: #dddddd;">3</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_4" zoneid="A1B" seatname="Q4" style="border-color: #dddddd;">4</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_5" zoneid="A1B" seatname="Q5" style="border-color: #dddddd;">5</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_6" zoneid="A1B" seatname="Q6" style="border-color: #dddddd;">6</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_7" zoneid="A1B" seatname="Q7" style="border-color: #dddddd;">7</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_8" zoneid="A1B" seatname="Q8" style="border-color: #dddddd;">8</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_9" zoneid="A1B" seatname="Q9" style="border-color: #dddddd;">9</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_10" zoneid="A1B" seatname="Q10" style="border-color: #dddddd;">10</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_11" zoneid="A1B" seatname="Q11" style="border-color: #dddddd;">11</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_12" zoneid="A1B" seatname="Q12" style="border-color: #dddddd;">12</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_13" zoneid="A1B" seatname="Q13" style="border-color: #dddddd;">13</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_14" zoneid="A1B" seatname="Q14" style="border-color: #dddddd;">14</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_15" zoneid="A1B" seatname="Q15" style="border-color: #dddddd;">15</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_16" zoneid="A1B" seatname="Q16" style="border-color: #dddddd;">16</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_17" zoneid="A1B" seatname="Q17" style="border-color: #dddddd;">17</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_18" zoneid="A1B" seatname="Q18" style="border-color: #dddddd;">18</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_19" zoneid="A1B" seatname="Q19" style="border-color: #dddddd;">19</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_20" zoneid="A1B" seatname="Q20" style="border-color: #dddddd;">20</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_21" zoneid="A1B" seatname="Q21" style="border-color: #dddddd;">21</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_22" zoneid="A1B" seatname="Q22" style="border-color: #dddddd;">22</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_23" zoneid="A1B" seatname="Q23" style="border-color: #dddddd;">23</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_24" zoneid="A1B" seatname="Q24" style="border-color: #dddddd;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_25" zoneid="A1B" seatname="Q25" style="border-color: #dddddd;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_26" zoneid="A1B" seatname="Q26" style="border-color: #dddddd;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_27" zoneid="A1B" seatname="Q27" style="border-color: #dddddd;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_28" zoneid="A1B" seatname="Q28" style="border-color: #dddddd;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_Q_29" zoneid="A1B" seatname="Q29" style="border-color: #dddddd;">29</a></li>
 		</ul>
 		</td></tr>
 		<tr><td>
       	<ul class="ul-seat" id="seat-row-B">
 			<li class="li-seat-header">R</li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_1" zoneid="A1B" seatname="R1" style="border-color: #dddddd;">1</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_2" zoneid="A1B" seatname="R2" style="border-color: #dddddd;">2</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_3" zoneid="A1B" seatname="R3" style="border-color: #dddddd;">3</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_4" zoneid="A1B" seatname="R4" style="border-color: #dddddd;">4</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_5" zoneid="A1B" seatname="R5" style="border-color: #dddddd;">5</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_6" zoneid="A1B" seatname="R6" style="border-color: #dddddd;">6</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_7" zoneid="A1B" seatname="R7" style="border-color: #dddddd;">7</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_8" zoneid="A1B" seatname="R8" style="border-color: #dddddd;">8</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_9" zoneid="A1B" seatname="R9" style="border-color: #dddddd;">9</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_10" zoneid="A1B" seatname="R10" style="border-color: #dddddd;">10</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_11" zoneid="A1B" seatname="R11" style="border-color: #dddddd;">11</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_12" zoneid="A1B" seatname="R12" style="border-color: #dddddd;">12</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_13" zoneid="A1B" seatname="R13" style="border-color: #dddddd;">13</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_14" zoneid="A1B" seatname="R14" style="border-color: #dddddd;">14</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_15" zoneid="A1B" seatname="R15" style="border-color: #dddddd;">15</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_16" zoneid="A1B" seatname="R16" style="border-color: #dddddd;">16</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_17" zoneid="A1B" seatname="R17" style="border-color: #dddddd;">17</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_18" zoneid="A1B" seatname="R18" style="border-color: #dddddd;">18</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_19" zoneid="A1B" seatname="R19" style="border-color: #dddddd;">19</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_20" zoneid="A1B" seatname="R20" style="border-color: #dddddd;">20</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_21" zoneid="A1B" seatname="R21" style="border-color: #dddddd;">21</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_22" zoneid="A1B" seatname="R22" style="border-color: #dddddd;">22</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_23" zoneid="A1B" seatname="R23" style="border-color: #dddddd;">23</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_24" zoneid="A1B" seatname="R24" style="border-color: #dddddd;">24</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_25" zoneid="A1B" seatname="R25" style="border-color: #dddddd;">25</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_26" zoneid="A1B" seatname="R26" style="border-color: #dddddd;">26</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_27" zoneid="A1B" seatname="R27" style="border-color: #dddddd;">27</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_28" zoneid="A1B" seatname="R28" style="border-color: #dddddd;">28</a></li>
-			<li class="li-seat"><a href="#" class="button" zoneprice="6000.0" id="cust_R_29" zoneid="A1B" seatname="R29" style="border-color: #dddddd;">29</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_1" zoneid="A1B" seatname="R1" style="border-color: #dddddd;">1</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_2" zoneid="A1B" seatname="R2" style="border-color: #dddddd;">2</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_3" zoneid="A1B" seatname="R3" style="border-color: #dddddd;">3</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_4" zoneid="A1B" seatname="R4" style="border-color: #dddddd;">4</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_5" zoneid="A1B" seatname="R5" style="border-color: #dddddd;">5</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_6" zoneid="A1B" seatname="R6" style="border-color: #dddddd;">6</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_7" zoneid="A1B" seatname="R7" style="border-color: #dddddd;">7</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_8" zoneid="A1B" seatname="R8" style="border-color: #dddddd;">8</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_9" zoneid="A1B" seatname="R9" style="border-color: #dddddd;">9</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_10" zoneid="A1B" seatname="R10" style="border-color: #dddddd;">10</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_11" zoneid="A1B" seatname="R11" style="border-color: #dddddd;">11</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_12" zoneid="A1B" seatname="R12" style="border-color: #dddddd;">12</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_13" zoneid="A1B" seatname="R13" style="border-color: #dddddd;">13</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_14" zoneid="A1B" seatname="R14" style="border-color: #dddddd;">14</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_15" zoneid="A1B" seatname="R15" style="border-color: #dddddd;">15</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_16" zoneid="A1B" seatname="R16" style="border-color: #dddddd;">16</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_17" zoneid="A1B" seatname="R17" style="border-color: #dddddd;">17</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_18" zoneid="A1B" seatname="R18" style="border-color: #dddddd;">18</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_19" zoneid="A1B" seatname="R19" style="border-color: #dddddd;">19</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_20" zoneid="A1B" seatname="R20" style="border-color: #dddddd;">20</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_21" zoneid="A1B" seatname="R21" style="border-color: #dddddd;">21</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_22" zoneid="A1B" seatname="R22" style="border-color: #dddddd;">22</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_23" zoneid="A1B" seatname="R23" style="border-color: #dddddd;">23</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_24" zoneid="A1B" seatname="R24" style="border-color: #dddddd;">24</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_25" zoneid="A1B" seatname="R25" style="border-color: #dddddd;">25</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_26" zoneid="A1B" seatname="R26" style="border-color: #dddddd;">26</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_27" zoneid="A1B" seatname="R27" style="border-color: #dddddd;">27</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_28" zoneid="A1B" seatname="R28" style="border-color: #dddddd;">28</a></li>
+			<li class="li-seat"><a href="#event-seat-A1A" class="button" zoneprice="6000.0" id="cust_R_29" zoneid="A1B" seatname="R29" style="border-color: #dddddd;">29</a></li>
 		</ul>
 		</td></tr>
       	</table>
@@ -1056,6 +1115,7 @@ $(document).ready(function() {
 	<input type="hidden" id="zoneId" name="zoneId" value=""/>
 	<input type="hidden" id="seatId" name="seatId" value=""/>
 	<input type="hidden" id="userLogin" name="userLogin" value="beartalo@gmail.com"/>
+	<input type="hidden" id="result" name="result" value=""/>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
