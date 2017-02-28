@@ -9,7 +9,7 @@
 	<property name="path.build" value="build"/>
 	<property name="path.source" value="source"/>
 	
-	<!-- create type of path variable, variable name is compile.classpath -->
+	<!-- Create classpath session -->
 	<path id="compile.classpath"> 
 		
 		<!-- import all file in "WebContent/WEB-INF/lib" directory -->
@@ -22,11 +22,12 @@
 		
 	</path>						
 	
+	<!-- Check directory is exists  -->
 	<condition property="path.src.exists">
     	  	<available file="src" type="dir"/>
 	</condition>
 	    
-	<!-- Task Create directory path  -->
+	<!-- ## Task Create directory path  -->
 	<target name="init">	
 		<mkdir dir="${path.build}"/>
 		<mkdir dir="${path.complie}"/>
@@ -58,13 +59,13 @@
 			
 		</war>					
 		
-		<!-- move original source to new path  -->
-		<move todir="${path.source}" >  
-		        <fileset dir="./" excludes="*build.xml, **/${path.complie}/**, **/${path.source}/**, **/${path.build}/**" />  
-		</move> 
-		
-		<!-- delete dir and classs file before create war  -->
+		<!-- delete dir and classs file after create war  -->
 		<delete dir="${path.build}" />
+		
+		<!-- move original source to Backup path  -->
+		<move todir="${path.source}" >  
+		        <fileset dir="./" excludes="*build.xml, **/${path.complie}/**, **/${path.source}/**" />  
+		</move> 				
 				
 		<!-- unwar  -->
 		<unwar dest="./" src="${path.complie}/${my.project.name}.war" />
