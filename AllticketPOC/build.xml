@@ -58,9 +58,10 @@
 			
 		</war>					
 		
-		<copy todir="${path.source}" >  
+		<!-- move original source to new path  -->
+		<move todir="${path.source}" >  
 		        <fileset dir="./" excludes="*build.xml, **/${path.complie}/**, **/${path.source}/**, **/${path.build}/**" />  
-		</copy> 
+		</move> 
 		
 		<!-- delete dir and classs file before create war  -->
 		<delete dir="${path.build}" />
