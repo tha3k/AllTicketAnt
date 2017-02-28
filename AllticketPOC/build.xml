@@ -7,7 +7,7 @@
 	<property name="path.web.content" value="WebContent"/>				
 	<property name="path.complie" value="complie"/>
 	<property name="path.build" value="build"/>
-	<property name="path.source" value="soruce"/>
+	<property name="path.source" value="source"/>
 	
 	<!-- create type of path variable, variable name is compile.classpath -->
 	<path id="compile.classpath"> 
