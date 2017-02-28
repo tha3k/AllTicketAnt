@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="run" name="AntBuild">				
 	
-	<!-- public session -->	
-	<basename property="my.project.name" file="${basedir}"/>		
+	<!-- context name session -->	
+	<basename property="my.project.name" file="${basedir}"/>
+	
+	<!-- directory path name session -->
 	<property name="path.web.content" value="WebContent"/>				
 	<property name="path.complie" value="complie"/>
 	<property name="path.build" value="build"/>
 	<property name="path.source" value="source"/>
 	
-	<!-- internal libraries reference -->
+	<!-- internal libraries reference path name session -->
 	<property name="path.lib.web.content" value="WebContent/WEB-INF/lib"/>
 	
 	<!-- classpath session -->
@@ -24,7 +26,7 @@
 		
 	</path>						
 	
-	<!-- check directory is exists  -->
+	<!-- check directory is exists condition -->
 	<condition property="path.src.exists">
     	<available file="src" type="dir"/>
 	</condition>
